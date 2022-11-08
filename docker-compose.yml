@@ -34,3 +34,5 @@ services:
     container_name: discovery
     ports:
       - "9070:9070"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
