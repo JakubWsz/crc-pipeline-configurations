@@ -1,0 +1,36 @@
+version: "3"
+services:
+  gateway-db:
+    image: "postgres:13.1-alpine"
+    container_name: crc-gateway-db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres
+  gateway:
+    image: "jakubwsz/crc-api-gateway:latest"
+    container_name: crc-gateway
+    ports:
+      - "9071:9071"
+    depends_on:
+      - gateway-db
+      - discovery
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://gateway-db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+  crud:
+    image: "jakubwsz/crc-management-crud:latest"
+    container_name: crc-crud
+    ports:
+      - "9072:9072"
+    depends_on:
+      - discovery
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+  discovery:
+    image: "jakubwsz/crc-discovery-server:latest"
+    container_name: discovery
+    ports:
+      - "9070:9070"
